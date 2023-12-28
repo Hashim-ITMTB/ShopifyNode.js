@@ -18,7 +18,7 @@ app.use(cors({
 }))
 
 app.get("/", async (req, res) => {
-    
+
     try {
         const { sort, page = 1, perPage = 10, search } = req.query;
 
@@ -43,7 +43,7 @@ app.get("/", async (req, res) => {
         // Paginate the results
         const startIndex = (page - 1) * perPage;
         const endIndex = startIndex + perPage;
-        const paginatedProducts = filteredProducts.slice(startIndex, endIndex);
+        const paginatedProducts = filteredProducts.slice(startIndex);
 
         return res.json(paginatedProducts);
     } catch (error) {
