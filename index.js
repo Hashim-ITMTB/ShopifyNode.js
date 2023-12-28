@@ -20,7 +20,7 @@ app.use(cors({
 app.get("/", async (req, res) => {
 
     try {
-        const { sort, page = 1, perPage = 10, search } = req.query;
+        const { sort, page = 1, perPage = 50, search } = req.query;
 
         // Fetch all products (consider using cursor-based pagination for large datasets)
         const allProducts = await shopify.product.list();
