@@ -4,7 +4,7 @@ const cors = require('cors')
 
 const Shopify = require("shopify-api-node")
 
-const port = 3000
+const port = 3001
 
 const shopify = new Shopify({
     shopName: "quickstart-230ce2ff.myshopify.com",
@@ -19,7 +19,7 @@ app.use(cors({
 
 app.get("/", async (req, res) => {
 
-    const { sort } = req.query
+    const { sort, search } = req.query
 
     const product = await shopify.product.list({ limit: 5 })
 
@@ -31,6 +31,13 @@ app.get("/", async (req, res) => {
         console.log('wrold')
         const desc_product = product.sort((asc, desc) => desc.title.localeCompare(asc.title));
         return res.json(desc_product)
+    } else if (search) {
+        const searchProduct = product?.filter((item) => {
+            if (item.title.includes(search)) {
+                return item
+            }
+        })
+        res.json(searchProduct)
     } else {
         res.json(product)
     }
