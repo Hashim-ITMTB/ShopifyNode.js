@@ -18,30 +18,38 @@ app.use(cors({
 }))
 
 app.get("/", async (req, res) => {
+    
+    try {
+        const { sort, page = 1, perPage = 10, search } = req.query;
 
-    const { sort, search } = req.query
+        // Fetch all products (consider using cursor-based pagination for large datasets)
+        const allProducts = await shopify.product.list();
 
-    const product = await shopify.product.list({ limit: 5 })
+        // Apply search filter
+        let filteredProducts = allProducts;
+        if (search) {
+            filteredProducts = allProducts.filter((product) =>
+                product.title.toLowerCase().includes(search.toLowerCase())
+            );
+        }
 
+        // Apply sorting
+        if (sort === 'asc') {
+            filteredProducts.sort((asc, desc) => asc.title.localeCompare(desc.title));
+        } else if (sort === 'desc') {
+            filteredProducts.sort((asc, desc) => desc.title.localeCompare(asc.title));
+        }
 
-    if (sort == "asc") {
-        const asc_product = product.sort((asc, desc) => asc.title.localeCompare(desc.title))
-        return res.json(asc_product)
-    } else if (sort == "desc") {
-        console.log('wrold')
-        const desc_product = product.sort((asc, desc) => desc.title.localeCompare(asc.title));
-        return res.json(desc_product)
-    } else if (search) {
-        const searchProduct = product?.filter((item) => {
-            if (item.title.includes(search)) {
-                return item
-            }
-        })
-        res.json(searchProduct)
-    } else {
-        res.json(product)
+        // Paginate the results
+        const startIndex = (page - 1) * perPage;
+        const endIndex = startIndex + perPage;
+        const paginatedProducts = filteredProducts.slice(startIndex, endIndex);
+
+        return res.json(paginatedProducts);
+    } catch (error) {
+        console.error('Error fetching products:', error);
+        return res.status(500).json({ error: 'Internal Server Error' });
     }
-
 
 })
 
