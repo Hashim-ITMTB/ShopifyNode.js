@@ -23,7 +23,8 @@ app.get("/", async (req, res) => {
         const { sort, page = 1, perPage = 50, search } = req.query;
 
         // Fetch all products (consider using cursor-based pagination for large datasets)
-        const allProducts = await shopify.product.list();
+        const startIndex = Number(page) * Number(perPage);
+        const allProducts = await shopify.product.list({limit : startIndex});
 
         // Apply search filter
         let filteredProducts = allProducts;
@@ -41,7 +42,6 @@ app.get("/", async (req, res) => {
         }
 
         // Paginate the results
-        const startIndex = Number(page) * Number(perPage);
         console.log(startIndex, filteredProducts.length)
         const endIndex = startIndex + perPage;
         const paginatedProducts = filteredProducts.slice(0 , startIndex);
