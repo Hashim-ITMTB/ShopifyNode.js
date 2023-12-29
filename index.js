@@ -27,10 +27,10 @@ app.get("/", async (req, res) => {
         let allProducts = []
         await shopify.product.count()
             .then(async (count) => {
-                console.log('count' , count)
                 if (count > 0) {
-
+                    
                     const pages = Math.ceil(count / 250);
+                    console.log('count' , count , count > 0 , pages)
                     let products = [];
 
                     for (i = 0; i < pages; i++) {
