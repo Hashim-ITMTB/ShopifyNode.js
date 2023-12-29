@@ -33,7 +33,7 @@ app.get("/", async (req, res) => {
                     console.log('count' , count , count > 0 , pages)
                     let products = [];
 
-                    for (i = 0; i < pages; i++) {
+                    // for (i = 0; i < pages; i++) {
                         // use Promise.all instead of waiting for each response
                         const result = await shopify.product.list({
                             limit: 85,
@@ -41,7 +41,7 @@ app.get("/", async (req, res) => {
                         });
                         console.log('result' , result)
                         products = products.concat(result);
-                    }
+                    // }
                     console.log('products' , products)
                     // products array should have all the products. Includes id and variants
                     allProducts = products
