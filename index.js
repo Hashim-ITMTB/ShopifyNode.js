@@ -38,8 +38,10 @@ app.get("/", async (req, res) => {
                             limit: 250,
                             page: i + 1,
                         });
+                        console.log('result' , result)
                         products = products.concat(result);
                     }
+                    console.log('products' , products)
                     // products array should have all the products. Includes id and variants
                     allProducts = products
                 }
