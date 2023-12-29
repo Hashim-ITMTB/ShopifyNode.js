@@ -64,8 +64,8 @@ app.get("/", async (req, res) => {
         }
 
         // Paginate the results
-        console.log(startIndex, filteredProducts.length)
         const startIndex = Number(page) * Number(perPage);
+        console.log(startIndex, filteredProducts.length)
         const endIndex = startIndex + perPage;
         const paginatedProducts = filteredProducts.slice(0 , startIndex);
 
