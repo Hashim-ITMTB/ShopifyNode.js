@@ -23,7 +23,30 @@ app.get("/", async (req, res) => {
         const { sort, page = 1, perPage = 50, search } = req.query;
 
         // Fetch all products (consider using cursor-based pagination for large datasets)
-        const allProducts = await shopify.product.list({limit : 1000});
+      
+        let allProducts = []
+        await shopify.product.count()
+            .then(async (count) => {
+                if (count > 0) {
+
+                    const pages = Math.ceil(count / 250);
+                    let products = [];
+
+                    for (i = 0; i < pages; i++) {
+                        // use Promise.all instead of waiting for each response
+                        const result = await shopify.product.list({
+                            limit: 250,
+                            page: i + 1,
+                        });
+                        products = products.concat(result);
+                    }
+                    // products array should have all the products. Includes id and variants
+                    allProducts = products
+                }
+            })
+            .catch(err => {
+                console.log(err);
+            });
 
         // Apply search filter
         let filteredProducts = allProducts;
