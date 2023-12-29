@@ -23,33 +23,20 @@ app.get("/", async (req, res) => {
         const { sort, page = 1, perPage = 50, search } = req.query;
 
         // Fetch all products (consider using cursor-based pagination for large datasets)
-      
-        let allProducts = []
-        await shopify.product.count()
-            .then(async (count) => {
-                if (count > 0) {
-                    
-                    const pages = Math.ceil(count / 250);
-                    console.log('count' , count , count > 0 , pages)
-                    let products = [];
 
-                    // for (i = 0; i < pages; i++) {
-                        // use Promise.all instead of waiting for each response
-                        const result = await shopify.product.list({
-                            limit: 250,
-                            page: 0,
-                        });
-                        console.log('result' , 'product is coming')
-                        products = products.concat(result);
-                    // }
-                    console.log('products' , products)
-                    // products array should have all the products. Includes id and variants
-                    allProducts = products
-                }
-            })
-            .catch(err => {
-                console.log(err);
-            });
+        let allProducts = []
+        const result = await shopify.product.list({ limit: 250 })
+
+        let params = result.nextPageParameters
+
+        allProducts = [...result]
+        while (params !== undefined) {
+            const products = await shopify.product.list(params)
+
+            allProducts = allProducts.concat(products)
+
+            params = products.nextPageParameters
+        }
 
         // Apply search filter
         let filteredProducts = allProducts;
@@ -68,9 +55,8 @@ app.get("/", async (req, res) => {
 
         // Paginate the results
         const startIndex = Number(page) * Number(perPage);
-        console.log(startIndex, filteredProducts.length)
         const endIndex = startIndex + perPage;
-        const paginatedProducts = filteredProducts.slice(0 , startIndex);
+        const paginatedProducts = filteredProducts.slice(0, startIndex);
 
         return res.json(paginatedProducts);
     } catch (error) {
