@@ -36,7 +36,7 @@ app.get("/", async (req, res) => {
                     for (i = 0; i < pages; i++) {
                         // use Promise.all instead of waiting for each response
                         const result = await shopify.product.list({
-                            limit: 250,
+                            limit: 85,
                             page: i + 1,
                         });
                         console.log('result' , result)
