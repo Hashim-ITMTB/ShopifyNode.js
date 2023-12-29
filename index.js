@@ -37,7 +37,7 @@ app.get("/", async (req, res) => {
                         // use Promise.all instead of waiting for each response
                         const result = await shopify.product.list({
                             limit: 250,
-                            page: 1,
+                            page: 0,
                         });
                         console.log('result' , 'product is coming')
                         products = products.concat(result);
